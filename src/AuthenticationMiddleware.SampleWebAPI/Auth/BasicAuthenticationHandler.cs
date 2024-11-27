@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using AuthenticationMiddleware.SampleWebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -55,7 +56,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         var username = credentials[0];
         var password = credentials[1];
 
-        // 验证用户名和密码
+        
         var validUsername = _configuration["BasicAuth:Username"];
         var validPassword = _configuration["BasicAuth:Password"];
 
@@ -64,7 +65,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             return Task.FromResult(AuthenticateResult.Fail("Invalid Username or Password"));
         }
 
-        // 创建身份信息
+        
         var claims = new[] { new Claim(ClaimTypes.Name, username) };
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new ClaimsPrincipal(identity);
@@ -78,5 +79,17 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         Response.StatusCode = 401;
         Response.Headers["WWW-Authenticate"] = $"Basic realm=\"{Options.ClaimsIssuer}\"";
         return base.HandleChallengeAsync(properties);
+    }
+}
+public static class BasicAuthenticationHandlerExtensions
+{
+    public static IServiceCollection UseBasicAuth(this IServiceCollection services)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = null;
+            options.DefaultChallengeScheme = null;
+        }).AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", options => { });
+        return services;
     }
 }

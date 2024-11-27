@@ -19,11 +19,7 @@ namespace AuthenticationMiddleware.SampleWebAPI
             builder.Services.AddSwaggerGen();
 
             // option 1. use AuthenticationBuilder
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = null;
-                options.DefaultChallengeScheme = null;
-            }).AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", options => { });
+            builder.Services.UseBasicAuth();
 
             var app = builder.Build();
 

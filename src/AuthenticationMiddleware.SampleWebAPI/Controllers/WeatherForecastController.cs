@@ -19,6 +19,7 @@ namespace AuthenticationMiddleware.SampleWebAPI.Controllers
             _logger = logger;
         }
 
+        [Authorize(AuthenticationSchemes = "Basic")]
         [HttpGet("GetWithoutAuthentication", Name = "GetWeatherForecastWithoutAuthentication")]
         public IEnumerable<WeatherForecast> GetWithoutAuthentication()
         {
